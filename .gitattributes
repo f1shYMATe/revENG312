@@ -1,0 +1,11 @@
+# Never let git touch line endings or diff binary firmware files
+*.bin   binary
+*.upg   binary
+*.hex   -text -diff
+*.eep   -text -diff
+
+# Docs and scripts: normalize to LF in the repo
+*.md    text eol=lf
+*.py    text eol=lf
+*.txt   text eol=lf
+SHA256SUMS text eol=lf

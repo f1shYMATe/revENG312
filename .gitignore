@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editors / OS
+.vscode/
+Thumbs.db
+.DS_Store
+
+# Local scratch (backups of original firmware etc. — never commit those)
+original_*.bin
+scratch/
