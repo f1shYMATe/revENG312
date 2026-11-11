@@ -6,7 +6,7 @@ Requires revENG312 or stock bootloader to be installed ([Installation steps](fla
 
 ## What you need
 
-- The `.upg` file for your device, e.g. `firmware/u312/revENG312_u312_m16a_1.0.00b.upg` for the micro312
+- The `.upg` file for your device, e.g. `firmware/u312/revENG312_u312_m16a_1.0.01b.upg` for the micro312
 - A serial connection to the device's 3.5 mm link jack. The link is **RS-232**, so use a USB-to-RS-232 adapter with a cable to the 3.5 mm plug (Tip: RXD, Ring: TXD, Sleeve: GND).
 - To know **which bootloader build** is installed (19'200 / 38'400 / 250'000) — the upload tool must use exactly that rate.
 
@@ -32,7 +32,7 @@ Hold down **MENU** and **RIGHT** while powering on the device. Both LEDs blink s
 
 ```sh
 pip install -r tools/requirements.txt
-python tools/fw-utils.py -i firmware/u312/revENG312_u312_m16a_1.0.00b.upg -u COM3 -b 19200
+python tools/fw-utils.py -i firmware/u312/revENG312_u312_m16a_1.0.01b.upg -u COM3 -b 19200
 ```
 
 - `-u` — serial port (`COM3` on Windows, `/dev/ttyUSB0` on Linux, `/dev/cu.usbserial-…` on macOS)

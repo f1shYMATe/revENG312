@@ -36,7 +36,7 @@ python fw-utils.py -i <file.upg> -u <port> -b <baud>
 Example:
 
 ```sh
-python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.00b.upg -u COM3 -b 38400
+python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.01b.upg -u COM3 -b 38400
 ```
 
 ## License

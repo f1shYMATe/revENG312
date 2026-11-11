@@ -47,5 +47,5 @@ In all commands below, replace `-c usbasp` with your programmer (`-c stk500v1 -P
    ```
 2. Erase the chip & flash the plain binary:
    ```sh
-   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.00b.bin:r
+   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.01b.bin:r
    ```
