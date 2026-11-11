@@ -22,7 +22,7 @@ certutil -hashfile revENG312_mk312_m16a_X.Y.ZZ.upg SHA256         # Windows, com
 
 | Firmware | Bootloader | Date | Notes |
 |---|---|---|---|
-| v1.0.01 | v1.1 | 2026-11-11 | Bug-fix release |
-| v1.0.00 | v1.1 | 2026-11-04 | First public beta release |
+| v1.0.01b | v1.1 | 2026-11-11 | Bug-fix release |
+| v1.0.00b | v1.1 | 2026-11-04 | First public beta release |
 
 Older versions are available from the [Releases](../../../releases) page.

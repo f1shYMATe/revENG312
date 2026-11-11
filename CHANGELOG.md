@@ -11,7 +11,7 @@ Firmware and bootloader are versioned separately. Firmware versions use the form
 
 Version for ATmega32A
 
-## [v1.0.01] — 2026-11-11
+## [v1.0.01b] — 2026-11-11
 
 Bug-fix release. Updating is recommended for all users.
 
@@ -31,9 +31,9 @@ Bug-fix release. Updating is recommended for all users.
 - When loading from EEPROM, top mode and favourite routine are clamped to `0x76`–`0x8F`, split A/B to `0x76`–`0x7E`, power level to 1–3 and baud rate to 0–2.
 
 ### Known issue
-Boxes set up with v1.0.00 keep the wrong user routine 7/8 start vectors; a factory reset doesn't clear them. To fix this, write `0x55` to EEPROM `0x8001` and restart the box.
+Boxes set up with v1.0.00b keep the wrong user routine 7/8 start vectors; a factory reset doesn't clear them. To fix this, write `0x55` to EEPROM `0x8001` and restart the box.
 
-## [v1.0.00] — 2026-11-04
+## [v1.0.00b] — 2026-11-04
 
 First public beta release.
 
