@@ -36,7 +36,7 @@ A module is a sequence of instructions followed by a terminator. Every built-in 
 
 ### 2.1 Address notation
 
-Addresses in this manual are the raw addresses as used inside instructions: 10 bits, `0x000`-`0x3FF`. The memory map and serial link documentation show RAM addresses with a virtual `0x4000` base. For example, `0x0085` appears there as `0x4085`.
+Addresses in this manual are the raw addresses as used inside instructions: 10 bits, `0x000`-`0x3FF`. The memory map and serial link documentation show RAM addresses with a virtual `0x4000` base. For example, `0x0085` appears there as `0x4085`. EEPROM locations (section 8) are given as exposed over the serial interface, starting at `0x8000`.
 
 - Address `0x0Hll`: the digit `H` (0-3) is added to the **opcode**, and `ll` is the **first operand byte**. Example: `0x018C` is stored as `H = 1` in the opcode and `8C` as operand.
 - SET is encoded differently (see section 5).
@@ -96,31 +96,31 @@ It is reset to "apply to both" when a module ends and after a conditional load h
 ### How an instruction is executed
 
 1. The instruction's address is taken as written. Together with it, the accumulator of channel A (`0x008C`) is prepared.
-2. If **apply to B** is selected, the address is replaced by its high counterpart (bit 8 is set: `0x0090` becomes `0x0190`, and a high address stays as it is) and the channel B accumulator (`0x018C`) is used. The only exception is address `0x0085` itself, which is left unchanged.
+2. If **apply to B** is selected, the channel B accumulator (`0x018C`) is used. For **write instructions** (SET, COPY, LOAD, DIV2, RAND, ADD, AND, OR, XOR) the address is also replaced by its high counterpart (bit 8 is set: `0x0090` becomes `0x0190`, and a high address stays as it is); the only exception is address `0x0085` itself, which is left unchanged. For **read instructions** (STORE, CONDEXEC) the address is never changed: bit 8 is not set.
 3. The instruction is executed on that address.
-4. If the address is a high address, or if apply to both is not selected, the instruction is finished.
-5. Otherwise (apply to both, low address) it is executed a second time with the high counterpart of the address and the channel B accumulator.
+4. The instruction is finished if apply to A or apply to B is selected, or if it is a write instruction with a high address (under apply to both it is executed exactly once, with the channel A accumulator).
+5. Otherwise (apply to both, and a low write address or a read instruction) it is executed a second time with the channel B accumulator. Write instructions use the high counterpart of the address; read instructions use the same address again.
 
 The selection is read before each instruction and again after each execution, so a write to `0x0085` takes effect immediately.
 
 ### Overview
 
-| `0x0085` | Low address | High address |
-|----------|-------------|--------------|
-| `0x01` apply to A | Channel A value and accumulator | Channel B value, channel A accumulator |
-| `0x02` apply to B | Channel B value and accumulator | Channel B value and accumulator |
-| `0x03` apply to both | Channel A and channel B values, each with its own accumulator | Channel B value, channel A accumulator |
+| `0x0085` | Write, low address | Write, high address | Read (STORE, CONDEXEC) |
+|----------|--------------------|---------------------|------------------------|
+| `0x01` apply to A | Channel A value and accumulator | Channel B value, channel A accumulator | Address as written, channel A accumulator |
+| `0x02` apply to B | Channel B value and accumulator | Channel B value and accumulator | Address as written, channel B accumulator |
+| `0x03` apply to both | Channel A and channel B values, each with its own accumulator | Channel B value, channel A accumulator | Address as written, read twice: channel A accumulator, then channel B accumulator |
 
 ### Consequences
 
 1. **Apply to both, low address:** the instruction runs twice, first on A, then on B.
 2. **High address:** the instruction runs exactly once on that address, whatever the selection (except `0x00`). A module running with "apply to A" can therefore still write channel B through a high address.
-3. **Accumulator with high addresses:** channel A's accumulator is used for a high address under apply to A and apply to both. Channel B's accumulator is used under apply to B, and in the second run under apply to both. STORE, LOAD and CONDEXEC with a high address therefore work with the A accumulator in those modes.
-4. **Apply to B shifts everything:** all addresses except `0x0085` are shifted, including read addresses and the common registers below `0x008C`. Because `0x0085` is never redirected, a module can switch the selection within the same module, for example back to apply to both after a section that was applied to channel B only.
+3. **Accumulator with high addresses:** channel A's accumulator is used for a high write address under apply to A and apply to both. Channel B's accumulator is used under apply to B. LOAD with a high address therefore works with the A accumulator in those modes.
+4. **Apply to B shifts write addresses:** all write addresses except `0x0085` are shifted, including the common registers below `0x008C`. Read addresses (STORE, CONDEXEC) are not shifted: they always read the address as written, only the accumulator changes to B's. Because `0x0085` is never redirected, a module can switch the selection within the same module, for example back to apply to both after a section that was applied to channel B only.
 5. **Module number for CONDEXEC:** it can only be stored at `0x0084`. Under apply to B, a write to `0x0084` ends up at `0x0184`, which has no such function. Switch the selection first by writing `0x0085`, then write `0x0084`.
-6. **Second run under apply to both:** every address is shifted, so a write to a register below `0x008C` (such as `0x0084`) also writes its high counterpart.
+6. **Second run under apply to both:** every write address is shifted, so a write to a register below `0x008C` (such as `0x0084`) also writes its high counterpart.
 7. **RAND** draws a separate random number per run, so channels A and B receive different values.
-8. **CONDEXEC** checks channel A first and loads the module on a match; otherwise channel B is checked.
+8. **CONDEXEC** reads the same address twice under apply to both: it compares it with the channel A accumulator first and loads the module on a match; otherwise it compares it with the channel B accumulator.
 
 ### Compared to the original firmware
 
@@ -275,7 +275,7 @@ Load module 5 if the value at `0x00A0` equals `0x10`:
 00           terminator
 ```
 
-Under apply to both, the SET instructions set both accumulators, and CONDEXEC compares `0x00A0` with the A accumulator and `0x01A0` with the B accumulator.
+Under apply to both, the SET instructions set both accumulators, and CONDEXEC compares `0x00A0` with the A accumulator and then again `0x00A0` with the B accumulator.
 
 ### Example module: switching the selection
 
@@ -297,7 +297,7 @@ When the condition is met, execution of the current module stops and the module 
 
 - The module number is read at the moment CONDEXEC fires, so earlier instructions of the same module can set it.
 - The loaded module runs with the current channel selection.
-- Under apply to both, channel A is checked first. If it matches, the module is loaded immediately; otherwise channel B is checked.
+- Under apply to both, the address is read twice: first compared with the channel A accumulator. If it matches, the module is loaded immediately; otherwise it is compared with the channel B accumulator. Under apply to B, it is compared with the channel B accumulator only. The address is the one written in the instruction; it is never shifted to channel B.
 - After the loaded module has finished, the channel selection is reset to apply to both.
 - The loaded module can itself contain a CONDEXEC. Up to three conditional loads may follow each other; a fourth raises error 52. The limit prevents a stack overflow in the firmware: each conditional load is processed while the previous one is still active on the stack.
 
@@ -305,21 +305,21 @@ When the condition is met, execution of the current module stops and the module 
 
 ## 8. Storing Modules
 
-Module number -> location (all addresses raw):
+Module number -> location (RAM addresses raw, EEPROM addresses as exposed over the serial interface):
 
 | Module number | Location | Start vector table | Data area |
 |---------------|----------|--------------------|-----------|
 | `0x00`-`0x23` (0-35) | built-in routines, flash | table in flash; entries are word offsets | start = module data + 2 x entry |
-| `0x80`-`0x9F` | user bank A, EEPROM | `0x020`-`0x03F` | EEPROM `0x040`-`0x0FF` |
-| `0xA0`-`0xBF` | user bank B, EEPROM | `0x100`-`0x11F` | EEPROM `0x120`-`0x1FF` |
+| `0x80`-`0x9F` | user bank A, EEPROM | `0x8020`-`0x803F` | EEPROM `0x8040`-`0x80FF` |
+| `0xA0`-`0xBF` | user bank B, EEPROM | `0x8100`-`0x811F` | EEPROM `0x8120`-`0x81FF` |
 | `0xC0`-`0xDF` | scratchpad, RAM | `0x01D0`-`0x01EF` | RAM `0x00C0`-`0x017F` |
 | all others | invalid | | error 15 |
 
 **Start of a user module:**
 
-The start vector table holds one byte per module: the offset of that module within the data area. The entries follow the module numbers in order. In bank A, entry `0x020` holds the offset of module `0x80`, entry `0x021` the offset of module `0x81`, and so on up to entry `0x03F` for module `0x9F`. Bank B (entry `0x100` for module `0xA0`) and the scratchpad (entry `0x01D0` for module `0xC0`) work the same way.
+The start vector table holds one byte per module: the offset of that module within the data area. The entries follow the module numbers in order. In bank A, entry `0x8020` holds the offset of module `0x80`, entry `0x8021` the offset of module `0x81`, and so on up to entry `0x803F` for module `0x9F`. Bank B (entry `0x8100` for module `0xA0`) and the scratchpad (entry `0x01D0` for module `0xC0`) work the same way.
 
-- A module starts at the **start of its data area plus the offset from its table entry**. Example: module `0x81` has the offset `0x10` in entry `0x021`, so it starts at EEPROM address `0x040 + 0x10 = 0x050`.
+- A module starts at the **start of its data area plus the offset from its table entry**. Example: module `0x81` has the offset `0x10` in entry `0x8021`, so it starts at EEPROM address `0x8040 + 0x10 = 0x8050`.
 - To store a module: write its bytes into the data area, then write the offset where they start into the table entry of its module number.
 - A start vector that points outside the data area, or a module that runs on beyond its end, raises error 55.
 

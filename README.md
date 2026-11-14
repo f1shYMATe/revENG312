@@ -63,14 +63,14 @@ Not sure whether you want the bootloader? See [docs/bootloader.md](docs/bootload
 | MK-312 | ATmega16A @ 8 MHz | ✅ beta |
 | micro312 | ATmega16A @ 8 MHz | ✅ beta |
 | _ET-312_ | _ATmega16A @ 8 MHz_ | _🧪 untested, probably works, try at own risk_ |
-| MK-312 | _ATmega32A @ 8 MHz_ | _🚧 planned_ |
+| MK-312 | ATmega32A @ 8 MHz | ✅ beta |
 
 ## What's in this repo
 ```
 firmware/
 ├─ bootloader/<mcu>/   Bootloaders, one per MCU and baud rate
 ├─ mk312/m16a/         MK-312 with ATmega16A
-├─ mk312/m32a/         MK-312 with ATmega32A (planned)
+├─ mk312/m32a/         MK-312 with ATmega32A
 ├─ u312/               micro312
 └─ SHA256SUMS          Checksums for all release files
 tools/                 Upload tool (fw-utils.py)

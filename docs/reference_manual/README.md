@@ -420,21 +420,21 @@ The "apply to" setting at `0x4085` decides which channel an instruction acts on.
 
 The module accumulator is at `0x408C` for channel A and at `0x418C` for channel B.
 
-| `0x4085` | Low address | High address |
-|---|---|---|
-| `0x00` – no channel | Instruction skipped | Instruction skipped |
-| `0x01` – apply to A | Channel A value, channel A accumulator | Channel B value, channel A accumulator |
-| `0x02` – apply to B | Channel B value, channel B accumulator | Channel B value, channel B accumulator |
-| `0x03` – apply to both | Channel A and channel B values, each with its own accumulator | Channel B value, channel A accumulator |
+| `0x4085` | Write, low address | Write, high address | Read (STORE, CONDEXEC) |
+|---|---|---|---|
+| `0x00` – no channel | Instruction skipped | Instruction skipped | Instruction skipped |
+| `0x01` – apply to A | Channel A value, channel A accumulator | Channel B value, channel A accumulator | Address as written, channel A accumulator |
+| `0x02` – apply to B | Channel B value, channel B accumulator | Channel B value, channel B accumulator | Address as written, channel B accumulator |
+| `0x03` – apply to both | Channel A and channel B values, each with its own accumulator | Channel B value, channel A accumulator | Address as written, read twice: channel A accumulator, then channel B accumulator |
 
 What follows from this:
 
-- **A high address is used exactly once**, whatever the selection (except `0x00`). A module running with apply to A can therefore still write channel B through a high address. STORE, LOAD and CONDEXEC with a high address use the channel A accumulator under apply to A and apply to both.
-- **Apply to B shifts every address** to its high counterpart, including read addresses and the registers `0x4080`–`0x408B`. The only exception is `0x4085` itself.
+- **A high address is used exactly once**, whatever the selection (except `0x00`). A module running with apply to A can therefore still write channel B through a high address. LOAD with a high address uses the channel A accumulator under apply to A and apply to both.
+- **Apply to B shifts every write address** to its high counterpart, including the registers `0x4080`–`0x408B`. The only exception is `0x4085` itself. Read addresses (STORE, CONDEXEC) are never shifted; only the accumulator changes to channel B's.
 - **`0x4085` is never redirected**, so a module can change the selection in the middle and the change takes effect with the next instruction. The selection is reset to apply to both when a module ends and after a conditional load has finished.
 - **The module to load on a condition** can only be stored at `0x4084`. Under apply to B, a write to `0x4084` ends up at `0x4184`, which has no such function: switch the selection first by writing `0x4085`. Under apply to both, a write to `0x4084` also writes `0x4184`.
 - **RAND** draws a separate random number for each channel. The limits always come from `0x408D` and `0x408E`.
-- **CONDEXEC** under apply to both checks channel A first and loads the module on a match; otherwise it checks channel B.
+- **CONDEXEC** under apply to both reads the same address twice: it compares it with the channel A accumulator first and loads the module on a match; otherwise it compares it with the channel B accumulator.
 - **With `0x00`**, the module is still read up to its terminator, but no instruction is executed and CONDEXEC cannot fire.
 
 Step-by-step details and examples are in the [Module Instruction Reference, section 3](module_opcode_reference.md#3-channel-selection).

@@ -27,11 +27,16 @@ In all commands below, replace `-c usbasp` with your programmer (`-c stk500v1 -P
    ```
 3. Erase the chip & flash the bootloader:
    ```sh
-   avrdude -c usbasp -p m16a -e -U flash:w:firmware/bootloader/m16a/revENG312_bootloader_m16a_19200_v1.1.hex:i
+   avrdude -c usbasp -p m16a -e -U flash:w:firmware/bootloader/m16a/revENG312_bootloader_m16a_19200_v1.2.hex:i
    ```
-   The `.hex` file carries its own load address (e.g. `0x3E00`), so it lands in the boot section. Always use the `.hex` here — never convert it to `.bin`.
+   For the ATmega32A, use `-p m32a` and the file from `firmware/bootloader/m32a/`:
+   ```sh
+   avrdude -c usbasp -p m32a -e -U flash:w:firmware/bootloader/m32a/revENG312_bootloader_m32a_19200_v1.2.hex:i
+   ```
+   The `.hex` file carries its own load address (`0x3E00` on the ATmega16A, `0x7800` on the ATmega32A), so it lands in the boot section. Always use the `.hex` here — never convert it to `.bin`.
 
 4. Disconnect the programmer and continue with [updating.md](updating.md) to upload the application.
+   > **ATmega32A:** `fw-utils.py` needs the additional argument `-s 0x7800` for the upload (see [tools/README.md](../tools/README.md)).
 
 **Expected result:** the flash now contains only the bootloader. With no valid application present, the device stays in update mode after power-on (both LEDs blinking simultaneously).
 
@@ -47,5 +52,6 @@ In all commands below, replace `-c usbasp` with your programmer (`-c stk500v1 -P
    ```
 2. Erase the chip & flash the plain binary:
    ```sh
-   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.01b.bin:r
+   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.02b.bin:r
    ```
+   For the ATmega32A, use `-p m32a` and `firmware/mk312/m32a/revENG312_mk312_m32a_1.0.02b.bin`.

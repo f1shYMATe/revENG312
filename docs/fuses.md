@@ -10,18 +10,25 @@ I recommend using a [fuse calculator](https://www.engbedded.com/fusecalc/) for a
 
 I recommend enabling BOD (brown out-detection). This prevents flash memory/EEPROM corruption that happens on rare occasions. Check out this [report](brownout_memory_corruption.md) for more details.
 
-The table below shows the fuses used for MCU with external crystal, SPI and BOD enabled. The BOD threshold is selected with the `BODLEVEL` bit (bit 7) of the low fuse; `0xBF` and `0x3F` differ only in that bit. The high fuse does not depend on the BOD threshold.
+The tables below show the fuses used for MCU with external crystal, SPI and BOD enabled. The BOD threshold is selected with the `BODLEVEL` bit (bit 7) of the low fuse; `0x3F` and `0xBF` differ only in that bit. The high fuse does not depend on the BOD threshold.
 
-| MCU | Bootloader | BOD threshold | lfuse | hfuse | avrdude arguments |
-|---|---|---|---|---|---|
-| ATmega16A | ❌ no | 2.7 V | `0xBF` | `0xDF` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdf:m` |
-| ATmega16A | ❌ no | 4.0 V | `0x3F` | `0xDF` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdf:m` |
-| ATmega16A | ✅ yes | 2.7 V | `0xBF` | `0xDC` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdc:m` |
-| ATmega16A | ✅ yes | 4.0 V | `0x3F` | `0xDC` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdc:m` |
-| _ATmega32A (planned, untested)_ | ❌ no | 2.7 V | `0xBF` | `0xDF` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdf:m` |
-| _ATmega32A (planned, untested)_ | ❌ no | 4.0 V | `0x3F` | `0xDF` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdf:m` |
-| _ATmega32A (planned, untested)_ | ✅ yes | 2.7 V | `0xBF` | `0xDA` | `-U lfuse:w:0xbf:m -U hfuse:w:0xda:m` |
-| _ATmega32A (planned, untested)_ | ✅ yes | 4.0 V | `0x3F` | `0xDA` | `-U lfuse:w:0x3f:m -U hfuse:w:0xda:m` |
+### ATmega16A
+
+| Bootloader | BOD threshold | lfuse | hfuse | avrdude arguments |
+|---|---|---|---|---|
+| ✅ yes | 4.0 V | `0x3F` | `0xDC` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdc:m` |
+| ✅ yes | 2.7 V | `0xBF` | `0xDC` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdc:m` |
+| ❌ no | 4.0 V | `0x3F` | `0xDF` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdf:m` |
+| ❌ no | 2.7 V | `0xBF` | `0xDF` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdf:m` |
+
+### ATmega32A
+
+| Bootloader | BOD threshold | lfuse | hfuse | avrdude arguments |
+|---|---|---|---|---|
+| ✅ yes | 4.0 V | `0x3F` | `0xDA` | `-U lfuse:w:0x3f:m -U hfuse:w:0xda:m` |
+| ✅ yes | 2.7 V | `0xBF` | `0xDA` | `-U lfuse:w:0xbf:m -U hfuse:w:0xda:m` |
+| ❌ no | 4.0 V | `0x3F` | `0xDF` | `-U lfuse:w:0x3f:m -U hfuse:w:0xdf:m` |
+| ❌ no | 2.7 V | `0xBF` | `0xDF` | `-U lfuse:w:0xbf:m -U hfuse:w:0xdf:m` |
 
 ### Choosing the BOD threshold (2.7 V or 4.0 V)
 
@@ -59,3 +66,12 @@ avrdude -c usbasp -p m16a -U lfuse:w:0xBF:m -U hfuse:w:0xDC:m
 ```
 
 For BOD at 4.0 V, use `-U lfuse:w:0x3F:m` instead.
+
+
+## Running on the internal oscillator (advanced)
+
+The fuse values above assume an external crystal. The original box runs without one: its low fuse is `0x24` (internal 8 MHz RC oscillator, BOD at 4.0 V). The equivalent with BOD at 2.7 V is `0xA4`. The high fuse stays as in the tables above.
+
+The bootloader loads the very last byte of its image (`0x3FF` on the ATmega16A, `0x7FF` on the ATmega32A) into `OSCCAL`. It is `0x9A` by default and only matters when the MCU runs on the internal oscillator. To trim the frequency to your individual MCU, change this byte in the bootloader `.hex` to the oscillator calibration value stored in the MCU's signature row, before flashing it.
+
+This is intended for users who know how to edit a byte in a hex file; no further instructions are given here.

@@ -24,6 +24,8 @@ The bootloader's baud rate is **fixed at build time**. There is no room in the t
 
 > If you are unsure, take **19'200**. An update of a ~16 KB image takes well under a minute even at that rate, and it keeps every upload tool available to you.
 
+Each baud rate is available for the ATmega16A (`bootloader/m16a/`) and the ATmega32A (`bootloader/m32a/`). With the ATmega32A, `fw-utils.py` needs the additional argument `-s 0x7800`.
+
 All three builds are otherwise identical: same entry condition, same `.upg` format, same checksum. How the revENG312 bootloader differs from the stock one is summarized in [Reference Manual 1.2](reference_manual/README.md#12-reveng312-bootloader).
 
 ## Bootloader baud rate vs. application baud rate

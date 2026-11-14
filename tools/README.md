@@ -30,13 +30,19 @@ python fw-utils.py -i <file.upg> -u <port> -b <baud>
 | `-d`, `--decrypt` | Decrypt the input `.upg` into a `.bin` (needs `-o`) |
 | `-o`, `--output` | Output file for `-e` / `-d` |
 | `-c`, `--crc` | Print the xor/checksum bytes of the input file |
-| `-s`, `--size` | Image size in bytes, decimal or hex (default: 15872 = `0x3E00`, the ATmega16A with bootloader) |
+| `-s`, `--size` | Image size in bytes, decimal or hex (default: 15872 = `0x3E00`, the ATmega16A with bootloader). **ATmega32A requires `-s 0x7800`** (30720 bytes) |
 | `-v`, `--verbose` | Log every byte exchanged during upload (for troubleshooting) |
 
 Example:
 
 ```sh
-python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.01b.upg -u COM3 -b 38400
+python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.02b.upg -u COM3 -b 38400
+```
+
+Example for an ATmega32A (note the additional `-s 0x7800`):
+
+```sh
+python fw-utils.py -i ../firmware/mk312/m32a/revENG312_mk312_m32a_1.0.02b.upg -u COM3 -b 38400 -s 0x7800
 ```
 
 ## License

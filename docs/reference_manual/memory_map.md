@@ -31,7 +31,7 @@ On the original, the flash window shows 256 bytes of the firmware's flash: part 
 | Address | revENG312 | Original |
 |---|---|---|
 | `0x00FC` | Box model: `0x0C` | Box model: `0x0C` |
-| `0x00FD`–`0x00FF` | Firmware version: major, minor, patch. revENG312 reports its own version, currently `0x01 0x00 0x01` for v1.0.01. | Firmware version, e.g. `0x01 0x06 0x00` for v1.6 |
+| `0x00FD`–`0x00FF` | Firmware version: major, minor, patch. revENG312 reports its own version, currently `0x01 0x00 0x02` for v1.0.02. | Firmware version, e.g. `0x01 0x06 0x00` for v1.6 |
 | Everything else | Returns `0x18` | Flash contents |
 
 No community tool is known to have problems with the revENG312 version number.
@@ -185,7 +185,7 @@ Modules may write both headers, but because some locations have other functions,
 
 **Channel selection.** `0x4085` accepts `0x01` (channel A), `0x02` (channel B) and `0x03` (both). With `0x00`, module instructions are ignored. It is reset to `0x03` when a module ends and after a conditional load has finished. Unlike all other addresses, a module instruction writing `0x4085` is never redirected to channel B. See [Reference Manual, section 8.2](README.md#82-channel-selection) and the [Module Instruction Reference, section 3](module_opcode_reference.md#3-channel-selection).
 
-**Module registers.** `0x4084` is the only location for the module to load on a condition; `0x4184` has no such function. The random number limits at `0x408D`–`0x408E` apply to both channels. See the [Module Instruction Reference, section 2.3](module_opcode_reference.md#23-special-addresses).
+**Module registers.** `0x4084` is the only location for the module to load on a condition; `0x4184` has no function. The random number limits at `0x408D`–`0x408E` apply to both channels. See the [Module Instruction Reference, section 2.3](module_opcode_reference.md#23-special-addresses).
 
 #### Channel B header
 
@@ -195,11 +195,13 @@ Modules may write both headers, but because some locations have other functions,
 | `0x4181` | LCD position for command `0x13` | `0x00` | same |
 | `0x4182` | Not used in release builds | `0x00` | Parameter r26 for box commands |
 | `0x4183` | Not used | `0x00` | Parameter r27 for box commands |
-| `0x4184` | Random 1: random Multi Adjust value | `0x00` | Set to random number during Random 1 program |
+| `0x4184` | Not used | `0x00` | Set to random number during Random 1 program |
 | `0x4185` | Not used | `0x03` | Unused; set to `0x0F` while the ramp is displayed |
 | `0x4186` | Multi Adjust range of channel B in split mode, minimum **(internal)** | `0x0F` | Unused |
 | `0x4187` | Multi Adjust range of channel B in split mode, maximum **(internal)** | `0xFF` | Unused |
-| `0x4188`–`0x418B` | Not used | `0x00` | same |
+| `0x4188`–`0x4189` | Not used | `0x00` | same |
+| `0x418A` | Random 1: random Multi Adjust value | `0x00` | Unused (the original uses `0x4184`) |
+| `0x418B` | Not used | `0x00` | same |
 | `0x418C` | Module accumulator, channel B | `0x00` | Unused |
 | `0x418D` | Not used | `0x00` | same |
 | `0x418E` | Not used | `0x08` | same |
