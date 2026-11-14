@@ -7,9 +7,25 @@ Firmware and bootloader are versioned separately. Firmware versions use the form
 # revENG312 Firmware
 - Full reimplementation of the original's main features, plus additional features and bug fixes listed in the [Reference Manual](docs/reference_manual/README.md#whats-new-or-different-at-a-glance).
 
-## [Unreleased]
+## [v1.0.02b] — 2026-11-14
 
-Version for ATmega32A
+ATmega32A support (public beta) and bug fixes.
+
+### Added
+- Firmware for the MK-312 with ATmega32A (`firmware/mk312/m32a/`). With `fw-utils.py`, the ATmega32A needs the additional argument `-s 0x7800`.
+
+### Fixed
+- After a link timeout, pressing MENU twice didn't completely reload the favourite routine.
+- Toggle mode could have wrong timing on some boxes.
+
+### Changed
+- The gap between pulses is 40 µs instead of 80 µs.
+
+### Notes for app developers
+- The random Multi Adjust value of the Random 1 program moved from `0x4184` to `0x418A`. `0x4184` is no longer used.
+- The firmware version reported at `0x00FD`–`0x00FF` is now `0x01 0x00 0x02`.
+
+Everything else in this release is internal: code restructuring, timing and utility refactoring, and exact divisions instead of approximations (frequency, battery scaling). No visible change.
 
 ## [v1.0.01b] — 2026-11-11
 
@@ -43,9 +59,9 @@ First public beta release.
 - XMODEM-CRC bootloader, compatible with the `.upg` format
 - Three builds: 19'200, 38'400, 250'000 baud
 
-## [Unreleased]
+## [v1.2] — 2026-11-14
 
-Version for ATmega32A
+Adds the ATmega32A builds. The code is functionally the same as v1.1, but the image layout changed: the very last byte of the image (`0x3FF` on the ATmega16A, `0x7FF` on the ATmega32A) used to be the last character of the copyright signature. It is now `0x9A` and gets loaded into `OSCCAL`. This only matters if the MCU runs on its internal oscillator (see [fuses.md](docs/fuses.md#running-on-the-internal-oscillator-advanced)).
 
 ## [v1.1] — 2026-11-04
 
