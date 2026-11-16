@@ -52,6 +52,6 @@ In all commands below, replace `-c usbasp` with your programmer (`-c stk500v1 -P
    ```
 2. Erase the chip & flash the plain binary:
    ```sh
-   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.02b.bin:r
+   avrdude -c usbasp -p m16a -e -U flash:w:firmware/mk312/m16a/revENG312_mk312_m16a_1.0.03b.bin:r
    ```
-   For the ATmega32A, use `-p m32a` and `firmware/mk312/m32a/revENG312_mk312_m32a_1.0.02b.bin`.
+   For the ATmega32A, use `-p m32a` and `firmware/mk312/m32a/revENG312_mk312_m32a_1.0.03b.bin`.

@@ -7,7 +7,7 @@
 | `bootloader/<mcu>/revENG312_bootloader_<mcu>_<baudrate>_vX.Y.hex` | Intel HEX, load address `0x3E00` (ATmega16A) or `0x7800` (ATmega32A) | ISP programmer (avrdude `:i`) | [flashing_isp.md § A](../docs/flashing_isp.md#a-install-the-bootloader) |
 | `SHA256SUMS` | Checksums | — | see below |
 
-Example: `mk312/m16a/revENG312_mk312_m16a_1.0.02b.upg` (`b` = public beta)
+Example: `mk312/m16a/revENG312_mk312_m16a_1.0.03b.upg` (`b` = public beta)
 
 Bootloader baud rates: `19200`, `38400`, `250k`, for example `bootloader/m16a/revENG312_bootloader_m16a_19200_v1.2.hex`.
 
@@ -24,6 +24,7 @@ certutil -hashfile revENG312_mk312_m16a_X.Y.ZZ.upg SHA256         # Windows, com
 
 | Firmware | Bootloader | Date | Notes |
 |---|---|---|---|
+| v1.0.03b | v1.2 | 2026-11-16 | Internal restructuring, minor bug fixes |
 | v1.0.02b | v1.2 | 2026-11-14 | ATmega32A support, bug fixes |
 | v1.0.01b | v1.1 | 2026-11-11 | Bug-fix release |
 | v1.0.00b | v1.1 | 2026-11-04 | First public beta release |

@@ -36,13 +36,13 @@ python fw-utils.py -i <file.upg> -u <port> -b <baud>
 Example:
 
 ```sh
-python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.02b.upg -u COM3 -b 38400
+python fw-utils.py -i ../firmware/mk312/m16a/revENG312_mk312_m16a_1.0.03b.upg -u COM3 -b 38400
 ```
 
 Example for an ATmega32A (note the additional `-s 0x7800`):
 
 ```sh
-python fw-utils.py -i ../firmware/mk312/m32a/revENG312_mk312_m32a_1.0.02b.upg -u COM3 -b 38400 -s 0x7800
+python fw-utils.py -i ../firmware/mk312/m32a/revENG312_mk312_m32a_1.0.03b.upg -u COM3 -b 38400 -s 0x7800
 ```
 
 ## License

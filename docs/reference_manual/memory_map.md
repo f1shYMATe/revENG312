@@ -31,7 +31,7 @@ On the original, the flash window shows 256 bytes of the firmware's flash: part 
 | Address | revENG312 | Original |
 |---|---|---|
 | `0x00FC` | Box model: `0x0C` | Box model: `0x0C` |
-| `0x00FD`–`0x00FF` | Firmware version: major, minor, patch. revENG312 reports its own version, currently `0x01 0x00 0x02` for v1.0.02. | Firmware version, e.g. `0x01 0x06 0x00` for v1.6 |
+| `0x00FD`–`0x00FF` | Firmware version: major, minor, patch. revENG312 reports its own version, currently `0x01 0x00 0x03` for v1.0.03. | Firmware version, e.g. `0x01 0x06 0x00` for v1.6 |
 | Everything else | Returns `0x18` | Flash contents |
 
 No community tool is known to have problems with the revENG312 version number.

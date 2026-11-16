@@ -7,6 +7,18 @@ Firmware and bootloader are versioned separately. Firmware versions use the form
 # revENG312 Firmware
 - Full reimplementation of the original's main features, plus additional features and bug fixes listed in the [Reference Manual](docs/reference_manual/README.md#whats-new-or-different-at-a-glance).
 
+## [v1.0.03b] — 2026-11-16
+
+Maintenance release. The bootloader is unchanged (v1.2).
+
+### Fixed
+- A few minor bugs.
+
+### Notes for app developers
+- The firmware version reported at `0x00FD`–`0x00FF` is now `0x01 0x00 0x03`.
+
+Everything else in this release is internal: code restructuring and internal cleanup. No visible change.
+
 ## [v1.0.02b] — 2026-11-14
 
 ATmega32A support (public beta) and bug fixes.
